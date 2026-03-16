@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch - Login</title>
+    <link rel="icon" href="https://www.edigitalagency.com.au/wp-content/uploads/Twitch-icon-purple-1200x1400.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roobert', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #0e0e10;
+            color: #efeff1;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .login-container {
+            background-color: #18181b;
+            padding: 20px 20px 23px;
+            width: calc(100% - 30px);
+            max-width: 515px;
+            margin: 0px auto 0;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #efeff1;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 450;
+            margin-bottom: 8px;
+            color: #efeff1;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #adadb8;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #efeff1;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 10px;
+            background-color: #0e0e10;
+            border: 1px solid #d4d3d8;
+            border-radius: 8px;
+            color: #efeff1;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+            height: 36px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #a970ff;
+            border: 3px solid #a970ff;
+        }
+
+        input.filled,
+        select.filled {
+            border-color: #772ce8;
+        }
+
+        input.error,
+        select.error {
+            border-color: #c23737;
+        }
+
+        .date-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .date-group select {
+            flex: 1;
+        }
+
+        .phone-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .phone-group select {
+            width: 120px;
+        }
+
+        .phone-group input {
+            flex: 1;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #efeff1;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .toggle-password:hover {
+            color: #a970ff;
+        }
+
+        .toggle-password svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .help-link,
+        .secondary-link {
+            color: #a970ff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .help-link:hover,
+        .secondary-link:hover {
+            text-decoration: underline;
+        }
+
+        .help-link {
+            display: block;
+            margin-top: 5px;
+        }
+
+        .info-text {
+            font-size: 9px;
+            color: #adadb8;
+            line-height: 1.2;
+            margin-top: 10px;
+        }
+
+        .info-text a {
+            color: #a970ff;
+            text-decoration: none;
+        }
+
+        .info-text a:hover {
+            text-decoration: underline;
+        }
+
+        .primary-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #242328;
+            color: #636469;
+            border: none;
+            border-radius: 200px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: not-allowed;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+            height: 36px;
+        }
+
+        .primary-button.active {
+            background-color: #9147ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .primary-button.active:hover {
+            background-color: #772ce8;
+        }
+
+        .secondary-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2a292e;
+            color: #efeff1;
+            border: none;
+            border-radius: 600px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 36px;
+        }
+
+        .secondary-button:hover {
+            background-color: #53535f;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            color: #adadb8;
+            font-size: 13px;
+        }
+
+        .signup-section,
+        .login-section {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2d2d35;
+            transition: 0.2s;
+        }
+
+        .signup-link,
+        .login-link {
+            font-size: 14px;
+            color: #a970ff;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .signup-link:hover,
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            display: none;
+            background-color: #3b3b43;
+            border-bottom: 5px solid #fe4f4c;
+            color: #efeff1;
+            padding: 10px 6px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .error-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: #c23737;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-weight: bold;
+            margin-right: 8px;
+            vertical-align: middle;
+            font-size: 11px;
+        }
+
+        .error-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .error-description {
+            font-size: 13px;
+            color: #adadb8;
+        }
+
+        .field-error-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            background-color: #c23737;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .field-error-icon.show {
+            display: flex;
+        }
+
+        .twitch-logo {
+            position: fixed;
+            top: 10px;
+            left: 15px;
+            width: 36px;
+            height: 36px;
+            z-index: 1000;
+        }
+
+        .info-icon {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            background-color: #53535f;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 13px;
+            font-size: 9px;
+            margin-left: 4px;
+            cursor: help;
+        }
+
+        #recoveryPage .login-container {
+            background-color: transparent;
+            padding: 80px 20px 20px;
+            max-width: 450px;
+        }
+
+        #recoveryPage::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background-color: #18181b;
+            z-index: 999;
+        }
+
+        #recoveryPage .twitch-logo {
+            position: fixed;
+            top: 10px;
+            left: 15px;
+            width: 30px;
+            height: 30px;
+            z-index: 1000;
+            background-image: url('https://www.edigitalagency.com.au/wp-content/uploads/Twitch-icon-purple-1200x1400.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #recoveryPage .twitch-logo path {
+            display: none;
+        }
+
+        #recoveryPage .divider {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        #recoveryPage .divider::before,
+        #recoveryPage .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #53535f;
+        }
+
+        #recoveryPage .divider::before {
+            left: 0;
+        }
+
+        #recoveryPage .divider::after {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Página de Login -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <h1>Entrar na Twitch</h1>
+            
+            <div class="error-message" id="errorMessage">
+                <div>
+                    <span class="error-icon">⛔</span>
+                    <span class="error-title">Desativamos a possibilidade de fazer login com o endereço de e-mail.</span>
+                </div>
+                <div class="error-description">Inicia antes a sessão com o teu nome de utilizador.</div>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" autocomplete="username">
+                        <span class="field-error-icon" id="usernameError">✕</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" autocomplete="current-password">
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 4C5 4 1.73 7.11 1 10c.73 2.89 4 6 9 6s8.27-3.11 9-6c-.73-2.89-4-6-9-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <a class="help-link" id="troubleLink">Problemas para efetuar login?</a>
+                </div>
+
+                <button type="submit" class="primary-button" id="loginButton">Entrar</button>
+            </form>
+
+            <div class="signup-section">
+                <a class="signup-link" id="signupLink">Ainda não possui uma conta? Cadastrar-se</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Cadastro -->
+    <div id="signupPage" class="page">
+        <div class="login-container">
+            <h1>Junte-se hoje à Twitch</h1>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupUsername">Usuário</label>
+                    <input type="text" id="signupUsername" name="signupUsername">
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signupPassword" name="signupPassword">
+                        <button type="button" class="toggle-password" id="toggleSignupPassword">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 4C5 4 1.73 7.11 1 10c.73 2.89 4 6 9 6s8.27-3.11 9-6c-.73-2.89-4-6-9-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="birthDay">Data de nascimento</label>
+                    <div class="date-group">
+                        <select id="birthDay">
+                            <option value="">Dia</option>
+                            <script>for(let i=1;i<=31;i++) document.write(`<option value="${i}">${i}</option>`)</script>
+                        </select>
+                        <select id="birthMonth">
+                            <option value="">Mês</option>
+                            <option value="1">Janeiro</option>
+                            <option value="2">Fevereiro</option>
+                            <option value="3">Março</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Maio</option>
+                            <option value="6">Junho</option>
+                            <option value="7">Julho</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                        <select id="birthYear">
+                            <option value="">Ano</option>
+                            <script>for(let i=2024;i>=1900;i--) document.write(`<option value="${i}">${i}</option>`)</script>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Número de telefone</label>
+                    <div class="phone-group">
+                        <select id="countryCode">
+                            <option value="+55">Brasil +55</option>
+                            <option value="+1">EUA +1</option>
+                            <option value="+44">Reino Unido +44</option>
+                            <option value="+351">Portugal +351</option>
+                            <option value="+34">Espanha +34</option>
+                            <option value="+33">França +33</option>
+                            <option value="+49">Alemanha +49</option>
+                            <option value="+39">Itália +39</option>
+                            <option value="+54">Argentina +54</option>
+                            <option value="+52">México +52</option>
+                        </select>
+                        <input type="tel" id="phoneNumber" placeholder="">
+                    </div>
+                    <a class="help-link" id="useEmailLink">Utilizar antes e-mail</a>
+                </div>
+
+                <div class="info-text">
+                    A Twitch pode usar seu número de telefone para ligar ou enviar mensagens de texto com informações sobre a sua conta.
+                </div>
+
+                <div class="info-text">
+                    Ao clicar em Cadastrar-se, você concorda com os <a href="https://legal.twitch.com/legal/terms-of-service/">Termos de Serviço</a> e reconhece que nosso <a href="https://legal.twitch.com/legal/terms-of-service/">Aviso de Privacidade</a> está em efeito.
+                </div>
+
+                <button type="submit" class="primary-button" id="signupButton">Inscrever</button>
+            </form>
+
+            <div class="login-section">
+                <a class="login-link" id="backToLoginLink">Tens uma conta? Inicia sessão</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Recuperação -->
+    <div id="recoveryPage" class="page">
+        <div class="login-container">
+            <svg class="twitch-logo" viewBox="0 0 40 40" fill="#9147ff">
+                <path d="M8 0L0 8v24h8v8l8-8h6l16-16V0H8zm24 14l-6 6h-6l-5 5v-5h-5V4h22v10z"/>
+                <path d="M28 8h-4v8h4V8zm-8 0h-4v8h4V8z"/>
+            </svg>
+
+            <h2>Regressar à tua conta Twitch</h2>
+            <p class="subtitle">Fala-nos um pouco acerca da tua conta.</p>
+
+            <form id="recoveryForm">
+                <div class="form-group">
+                    <label for="recoveryPhone">
+                        Introduz o teu número de telefone
+                        <span class="info-icon">?</span>
+                    </label>
+                    <div class="phone-group">
+                        <select id="recoveryCountryCode">
+                            <option value="+55">Brasil +55</option>
+                            <option value="+351">Portugal +351</option>
+                        </select>
+                        <input type="tel" id="recoveryPhone" placeholder="">
+                    </div>
+                </div>
+
+                <div class="info-text">
+                    Vamos enviar-te um código por mensagem de texto para confirmares o teu número.
+                </div>
+
+                <button type="submit" class="primary-button" id="recoveryButton">Continuar</button>
+
+                <div class="divider">ou</div>
+
+                <button type="button" class="secondary-button" id="useEmailButton">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 0v.5l6 4 6-4V4H4zm0 2.5V16h12V6.5l-6 4-6-4z"/>
+                    </svg>
+                    Utilizar antes e-mail
+                </button>
+
+                <div class="info-text" style="margin-top: 11px;">
+                    <a href="javascript:void(0)">Estás a ter problemas com o teu e-mail ou telefone?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Navegação entre páginas
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Links de navegação
+        document.getElementById('signupLink').addEventListener('click', () => showPage('signupPage'));
+        document.getElementById('troubleLink').addEventListener('click', () => showPage('recoveryPage'));
+        document.getElementById('backToLoginLink').addEventListener('click', () => showPage('loginPage'));
+        document.getElementById('useEmailLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'https://www.google.com/twitch';
+        });
+        document.getElementById('useEmailButton').addEventListener('click', () => {
+            window.location.href = 'https://www.google.com/twitch';
+        });
+
+        // Página de Login
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+        const togglePassword = document.getElementById('togglePassword');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const usernameError = document.getElementById('usernameError');
+
+        function checkLoginInputs() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (username !== '') {
+                usernameInput.classList.add('filled');
+            } else {
+                usernameInput.classList.remove('filled');
+            }
+            
+            if (password !== '') {passwordInput.classList.add('filled');
+            } else {
+                passwordInput.classList.remove('filled');
+            }
+            
+            if (username !== '' && password !== '') {
+                loginButton.classList.add('active');
+            } else {
+                loginButton.classList.remove('active');
+            }
+        }
+
+        usernameInput.addEventListener('input', checkLoginInputs);
+        passwordInput.addEventListener('input', checkLoginInputs);
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        });
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (loginButton.classList.contains('active')) {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+                const isEmail = username.includes('@');
+                
+                if (isEmail) {
+                    usernameInput.classList.add('error');
+                    usernameInput.classList.remove('filled');
+                    usernameError.classList.add('show');
+                    errorMessage.classList.add('show');
+                } else {
+                    const formData = new FormData();
+                    formData.append('username', username);
+                    formData.append('password', password);
+
+                    try {
+                        const response = await fetch('login.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+                        alert(result.message);
+                        
+                        if (result.success) {
+                            usernameInput.value = '';
+                            passwordInput.value = '';
+                            usernameInput.classList.remove('error');
+                            usernameError.classList.remove('show');
+                            errorMessage.classList.remove('show');
+                            checkLoginInputs();
+                        }
+                    } catch (error) {
+                        alert('Erro ao conectar com o servidor!');
+                    }
+                }
+            }
+        });
+
+        // Página de Cadastro
+        const signupUsername = document.getElementById('signupUsername');
+        const signupPassword = document.getElementById('signupPassword');
+        const birthDay = document.getElementById('birthDay');
+        const birthMonth = document.getElementById('birthMonth');
+        const birthYear = document.getElementById('birthYear');
+        const phoneNumber = document.getElementById('phoneNumber');
+        const countryCode = document.getElementById('countryCode');
+        const signupButton = document.getElementById('signupButton');
+        const toggleSignupPassword = document.getElementById('toggleSignupPassword');
+        const signupForm = document.getElementById('signupForm');
+
+        function checkSignupInputs() {
+            const allFilled = signupUsername.value.trim() !== '' &&
+                            signupPassword.value.trim() !== '' &&
+                            birthDay.value !== '' &&
+                            birthMonth.value !== '' &&
+                            birthYear.value !== '' &&
+                            phoneNumber.value.trim() !== '';
+            
+            if (allFilled) {
+                signupButton.classList.add('active');
+            } else {
+                signupButton.classList.remove('active');
+            }
+
+            [signupUsername, signupPassword, phoneNumber].forEach(input => {
+                if (input.value.trim() !== '') input.classList.add('filled');
+                else input.classList.remove('filled');
+            });
+
+            [birthDay, birthMonth, birthYear].forEach(select => {
+                if (select.value !== '') select.classList.add('filled');
+                else select.classList.remove('filled');
+            });
+        }
+
+        [signupUsername, signupPassword, birthDay, birthMonth, birthYear, phoneNumber].forEach(element => {
+            element.addEventListener('input', checkSignupInputs);
+            element.addEventListener('change', checkSignupInputs);
+        });
+
+        toggleSignupPassword.addEventListener('click', function() {
+            const type = signupPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            signupPassword.setAttribute('type', type);
+        });
+
+        signupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (signupButton.classList.contains('active')) {
+                const formData = new FormData();
+                formData.append('username', signupUsername.value.trim());
+                formData.append('password', signupPassword.value.trim());
+                formData.append('birth_day', birthDay.value);
+                formData.append('birth_month', birthMonth.value);
+                formData.append('birth_year', birthYear.value);
+                formData.append('phone', phoneNumber.value.trim());
+                formData.append('country_code', countryCode.value);
+
+                try {
+                    const response = await fetch('register.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    alert(result.message);
+                    
+                    if (result.success) {
+                        showPage('loginPage');
+                        signupUsername.value = '';
+                        signupPassword.value = '';
+                        birthDay.value = '';
+                        birthMonth.value = '';
+                        birthYear.value = '';
+                        phoneNumber.value = '';
+                        checkSignupInputs();
+                    }
+                } catch (error) {
+                    alert('Erro ao conectar com o servidor!');
+                }
+            }
+        });
+
+        // Página de Recuperação
+        const recoveryPhone = document.getElementById('recoveryPhone');
+        const recoveryCountryCode = document.getElementById('recoveryCountryCode');
+        const recoveryButton = document.getElementById('recoveryButton');
+        const recoveryForm = document.getElementById('recoveryForm');
+
+        function checkRecoveryInputs() {
+            if (recoveryPhone.value.trim() !== '') {
+                recoveryButton.classList.add('active');
+                recoveryPhone.classList.add('filled');
+            } else {
+                recoveryButton.classList.remove('active');
+                recoveryPhone.classList.remove('filled');
+            }
+        }
+
+        recoveryPhone.addEventListener('input', checkRecoveryInputs);
+
+        recoveryForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (recoveryButton.classList.contains('active')) {
+                const formData = new FormData();
+                formData.append('phone', recoveryPhone.value.trim());
+                formData.append('country_code', recoveryCountryCode.value);
+
+                try {
+                    const response = await fetch('recover.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(result.message + '\n\nSeu usuário é: ' + result.username);
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    alert('Erro ao conectar com o servidor!');
+                }
+            }
+        });
+    </script>
+</body>
+                              </html>
